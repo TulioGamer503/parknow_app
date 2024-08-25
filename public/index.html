@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor de Sensores</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: white; 
+            color: gray; 
+            text-align: center; 
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .sensor {
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f5f5f5;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .sensor span {
+            font-weight: bold; 
+            padding: 10px;
+            border-radius: 5px;
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        .verde { 
+            color: white; 
+            background-color: green; 
+        }
+
+        .rojo { 
+            color: white; 
+            background-color: red; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Monitor de Sensores</h1>
+    <div class="grid-container">
+        <div class="sensor">Sensor 1: <span id="sensor1" class="verde">-</span></div>
+        <div class="sensor">Sensor 2: <span id="sensor2" class="verde">-</span></div>
+        <div class="sensor">Sensor 3: <span id="sensor3" class="verde">-</span></div>
+        <!-- Añadir más sensores si es necesario -->
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('actualizar-sensores', (datosSensor) => {
+            actualizarEstadoSensor('sensor1', datosSensor.Sensor1);
+            actualizarEstadoSensor('sensor2', datosSensor.Sensor2);
+            actualizarEstadoSensor('sensor3', datosSensor.Sensor3);
+        });
+
+        function actualizarEstadoSensor(id, valor) {
+            const elemento = document.getElementById(id);
+
+            if (valor === 0) { 
+                elemento.textContent = "Detectado";
+                elemento.classList.remove('verde');
+                elemento.classList.add('rojo');
+            } else {
+                elemento.textContent = "No Detectado";
+                elemento.classList.remove('rojo');
+                elemento.classList.add('verde');
+            }
+        }
+    </script>
+</body>
+</html>
