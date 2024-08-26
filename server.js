@@ -35,5 +35,5 @@ puertoSerial.on('error', (err) => {
 app.use(express.static('public'));
 
 server.listen(3000, () => {
-    console.log('Servidor escuchando en http://localhost:3000');
+    console.log('Servidor escuchando en https://parknow-app.onrender.com/:');
 });
