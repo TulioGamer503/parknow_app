@@ -8,8 +8,9 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+// Configuración del puerto serial
 const puertoSerial = new SerialPort({
-    path: 'COM3', // Cambia "COM3" al puerto correcto
+    path: process.env.SERIAL_PORT_PATH || 'COM3', // Cambia "COM3" al puerto correcto
     baudRate: 9600
 });
 
@@ -34,6 +35,9 @@ puertoSerial.on('error', (err) => {
 // Configurar Express para servir archivos estáticos
 app.use(express.static('public'));
 
-server.listen(3000, () => {
-    console.log('Servidor escuchando en: http://localhost:3000');
+// Obtener el puerto del entorno, por defecto 3000
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+    console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
