@@ -1,119 +1,146 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parking Spaces</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #ccc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-            font-family: Arial, sans-serif;
-        }
-
-        .parking-lot {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 1000px;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px; /* Espacio entre las filas */
-        }
-
-        .parking-row {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .parking-space {
-            width: 150px;
-            height: 200px;
-            border: 1px solid #000;
-            background-color: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 5px;
-            font-size: 18px;
-            color: #333;
-        }
-
-        .verde {
-            background-color: green;
-            color: white;
-        }
-
-        .rojo {
-            background-color: red;
-            color: white;
-        }
-
-        .no-funcional {
-            background-color: gray;
-            color: white;
-        }
-    </style>
+    <title>Parking Now</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
 
-<div class="parking-lot">
-    <!-- Fila superior -->
-    <div class="parking-row">
-        <span id="sensor1" class="parking-space verde">-</span>
-        <span id="sensor2" class="parking-space verde">-</span>
-        <span id="sensor3" class="parking-space verde">-</span>
-        <span id="sensor4" class="parking-space verde">-</span>
-        <span id="sensor5" class="parking-space no-funcional">No Funcional</span>
-        <span id="sensor6" class="parking-space no-funcional">No Funcional</span>
+<body class="bg-gray-300 flex justify-center items-center min-h-screen flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-gray-800 w-full py-6 fixed top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center px-8">
+            <div class="flex items-center">
+                <img src="img/logo.png" alt="Logo" class="w-10">
+            </div>
+            <div class="lg:hidden flex items-center">
+                <img src="img/barra-de-menus.png" alt="Menu" onclick="toggleMenu();" class="w-8 cursor-pointer">
+            </div>
+            <div id="menu" class="lg:flex hidden w-full lg:w-auto lg:items-center lg:justify-end flex-col lg:flex-row">
+                <a href="http://parknow.byethost9.com/index.php" class="text-white lg:mr-7 mb-4 lg:mb-0 hover:text-yellow-300">Inicio</a>
+                <a href="#" class="text-white lg:mr-7 mb-4 lg:mb-0 hover:text-yellow-300">Estacionar</a>
+                <a href="http://parknow.byethost9.com/team.php" class="text-white lg:mr-7 mb-4 lg:mb-0 hover:text-yellow-300">Nosotros</a>
+                <a href="http://parknow.byethost9.com/AcercaDe.php" class="text-white hover:text-yellow-300">Acerca de</a>
+            </div>
+        </div>
+        <!-- Menu mobile -->
+        <div id="mobile-menu" class="lg:hidden fixed top-16 right-0 bg-gray-800 w-full h-screen z-40 overflow-y-auto transform translate-x-full transition-transform duration-300 ease-in-out">
+            <div class="flex justify-end p-4">
+                <img src="img/barra-de-menus.png" alt="Close Menu" onclick="toggleMenu();" class="w-8 cursor-pointer">
+            </div>
+            <div class="flex flex-col items-center">
+                <a href="http://parknow.byethost9.com/index.php" class="text-white py-4 hover:text-yellow-300">Inicio</a>
+                <a href="#" class="text-white py-4 hover:text-yellow-300">Estacionar</a>
+                <a href="http://parknow.byethost9.com/team.php" class="text-white py-4 hover:text-yellow-300">Nosotros</a>
+                <a href="http://parknow.byethost9.com/AcercaDe.php" class="text-white py-4 hover:text-yellow-300">Acerca de</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumbs -->
+    <div class="flex items-center py-4 overflow-x-auto whitespace-nowrap mt-16 px-4">
+        <a href="#" id="breadcrumb-planta-baja" class="text-gray-500 hover:underline" onclick="mostrarSeccion('planta-baja')">
+            Planta Baja
+        </a>
+
+        <span class="mx-5 text-gray-500">
+            /
+        </span>
+
+        <a href="#" id="breadcrumb-planta-alta" class="text-gray-500 hover:underline" onclick="mostrarSeccion('planta-alta')">
+            Planta Alta
+        </a>
     </div>
-</div>
 
-<div class="parking-lot">
-    <!-- Fila inferior -->
-    <div class="parking-row">
-        <span id="sensor7" class="parking-space no-funcional">No Funcional</span>
-        <span id="sensor8" class="parking-space no-funcional">No Funcional</span>
-        <span id="sensor9" class="parking-space no-funcional">No Funcional</span>
-        <span id="sensor10" class="parking-space no-funcional">No Funcional</span>
-        <span id="sensor11" class="parking-space no-funcional">No Funcional</span>
-        <span id="sensor12" class="parking-space no-funcional">No Funcional</span>
+    <!-- Contenido principal -->
+    <div id="planta-baja" class="w-full max-w-5xl p-4 bg-white rounded-lg shadow-lg mb-8 mx-4 lg:mx-auto">
+        <h1 class="text-center text-2xl font-semibold text-gray-800 mb-4">Planta Baja</h1>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <span id="sensor1" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
+            <span id="sensor2" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
+            <span id="sensor3" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
+            <span id="sensor4" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
+            <span id="sensor5" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
+            <span id="sensor6" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
+        </div>
     </div>
-</div>
 
-<script src="/socket.io/socket.io.js"></script>
-<script>
-    const socket = io();
+    <div id="planta-alta" class="w-full max-w-5xl p-4 bg-white rounded-lg shadow-lg hidden mx-4 lg:mx-auto">
+        <h1 class="text-center text-2xl font-semibold text-gray-800 mb-4">Planta Alta</h1>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <span id="sensor7" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
+            <span id="sensor8" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
+            <span id="sensor9" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
+            <span id="sensor10" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
+            <span id="sensor11" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
+            <span id="sensor12" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
+        </div>
+    </div>
 
-    socket.on('actualizar-sensores', (datosSensor) => {
-        actualizarEstadoSensor('sensor1', datosSensor.Sensor1);
-        actualizarEstadoSensor('sensor2', datosSensor.Sensor2);
-        actualizarEstadoSensor('sensor3', datosSensor.Sensor3);
-        actualizarEstadoSensor('sensor4', datosSensor.Sensor4);
-    });
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
 
-    function actualizarEstadoSensor(id, valor) {
-        const elemento = document.getElementById(id);
-        if (valor === 0) { 
-            elemento.textContent = "Ocupado";
-            elemento.classList.remove('verde');
-            elemento.classList.add('rojo');
-        } else {
-            elemento.textContent = "Libre";
-            elemento.classList.remove('rojo');
-            elemento.classList.add('verde');
+        socket.on('actualizar-sensores', (datosSensor) => {
+            actualizarEstadoSensor('sensor1', datosSensor.Sensor1);
+            actualizarEstadoSensor('sensor2', datosSensor.Sensor2);
+            actualizarEstadoSensor('sensor3', datosSensor.Sensor3);
+            actualizarEstadoSensor('sensor4', datosSensor.Sensor4);
+        });
+
+        function actualizarEstadoSensor(id, valor) {
+            const elemento = document.getElementById(id);
+            if (valor === 0) {
+                elemento.textContent = "Ocupado";
+                elemento.classList.remove('bg-green-500');
+                elemento.classList.add('bg-red-500');
+            } else {
+                elemento.textContent = "Libre";
+                elemento.classList.remove('bg-red-500');
+                elemento.classList.add('bg-green-500');
+            }
         }
-    }
-</script>
+
+        function mostrarSeccion(seccion) {
+            document.getElementById('planta-baja').classList.add('hidden');
+            document.getElementById('planta-alta').classList.add('hidden');
+            document.getElementById(seccion).classList.remove('hidden');
+
+            // Cambiar colores de fondo del breadcrumb
+            const breadcrumbPlantaBaja = document.getElementById('breadcrumb-planta-baja');
+            const breadcrumbPlantaAlta = document.getElementById('breadcrumb-planta-alta');
+            
+            if (seccion === 'planta-baja') {
+                breadcrumbPlantaBaja.classList.add('text-gray-800');
+                breadcrumbPlantaBaja.classList.remove('text-gray-500');
+                breadcrumbPlantaAlta.classList.add('text-gray-500');
+                breadcrumbPlantaAlta.classList.remove('text-gray-800');
+            } else {
+                breadcrumbPlantaBaja.classList.add('text-gray-500');
+                breadcrumbPlantaBaja.classList.remove('text-gray-800');
+                breadcrumbPlantaAlta.classList.add('text-gray-800');
+                breadcrumbPlantaAlta.classList.remove('text-gray-500');
+            }
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById("mobile-menu");
+            if (menu.classList.contains("translate-x-full")) {
+                menu.classList.remove("translate-x-full");
+                menu.classList.add("translate-x-0");
+            } else {
+                menu.classList.add("translate-x-full");
+                menu.classList.remove("translate-x-0");
+            }
+        }
+
+        // Inicialmente mostrar la sección de Planta Baja
+        mostrarSeccion('planta-baja');
+    </script>
 
 </body>
+
 </html>
