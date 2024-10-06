@@ -59,12 +59,25 @@
     <div id="planta-baja" class="w-full max-w-5xl p-4 bg-white rounded-lg shadow-lg mb-8 mx-4 lg:mx-auto">
         <h1 class="text-center text-2xl font-semibold text-gray-800 mb-4">Planta Baja</h1>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <span id="sensor1" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
-            <span id="sensor2" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
-            <span id="sensor3" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
-            <span id="sensor4" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
-            <span id="sensor5" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
-            <span id="sensor6" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
+            <div id="sensor1" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">
+                <p>-</p>
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded hidden" onclick="reservar(1)">
+                    Reservar
+                </button>
+            </div>
+            <div id="sensor2" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">
+                <p>-</p>
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded hidden" onclick="reservar(2)">
+                    Reservar
+                </button>
+            </div>
+            <div id="sensor3" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">
+                <p>-</p>
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded hidden" onclick="reservar(3)">
+                    Reservar
+                </button>
+            </div>
+            <!-- Otros sensores -->
         </div>
     </div>
 
