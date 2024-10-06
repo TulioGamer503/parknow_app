@@ -61,25 +61,25 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div id="sensor1" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">
                 <p>-</p>
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded hidden" onclick="reservar(1)">
+                <button id="btn-reservar1" onclick="reservarEspacio('sensor1', 'btn-reservar1')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded">
                     Reservar
                 </button>
             </div>
             <div id="sensor2" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">
                 <p>-</p>
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded hidden" onclick="reservar(2)">
+                <button id="btn-reservar2" onclick="reservarEspacio('sensor2', 'btn-reservar2')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded">
                     Reservar
                 </button>
             </div>
             <div id="sensor3" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">
                 <p>-</p>
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded hidden" onclick="reservar(3)">
+                <button id="btn-reservar3" onclick="reservarEspacio('sensor3', 'btn-reservar3')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded">
                     Reservar
                 </button>
             </div>
-            <!-- Otros sensores -->
         </div>
     </div>
+    
 
     <div id="planta-alta" class="w-full max-w-5xl p-4 bg-white rounded-lg shadow-lg hidden mx-4 lg:mx-auto">
         <h1 class="text-center text-2xl font-semibold text-gray-800 mb-4">Planta Alta</h1>
@@ -116,6 +116,20 @@
             }
         }
 
+        function reservarEspacio(sensorId, botonId) {
+            const sensorElement = document.getElementById(sensorId);
+            const botonReservar = document.getElementById(botonId);
+
+            // Cambiar el color del espacio de estacionamiento a amarillo cuando se reserve
+            sensorElement.classList.remove('bg-green-500', 'bg-red-500');
+            sensorElement.classList.add('bg-yellow-500');
+            sensorElement.textContent = "Reservado";
+
+            // Desactivar el botón de reservar
+            botonReservar.disabled = true;
+            botonReservar.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
         function mostrarSeccion(seccion) {
             document.getElementById('planta-baja').classList.add('hidden');
             document.getElementById('planta-alta').classList.add('hidden');
@@ -131,28 +145,20 @@
                 breadcrumbPlantaAlta.classList.add('text-gray-500');
                 breadcrumbPlantaAlta.classList.remove('text-gray-800');
             } else {
-                breadcrumbPlantaBaja.classList.add('text-gray-500');
                 breadcrumbPlantaBaja.classList.remove('text-gray-800');
-                breadcrumbPlantaAlta.classList.add('text-gray-800');
+                breadcrumbPlantaBaja.classList.add('text-gray-500');
                 breadcrumbPlantaAlta.classList.remove('text-gray-500');
+                breadcrumbPlantaAlta.classList.add('text-gray-800');
             }
         }
 
         function toggleMenu() {
-            const menu = document.getElementById("mobile-menu");
-            if (menu.classList.contains("translate-x-full")) {
-                menu.classList.remove("translate-x-full");
-                menu.classList.add("translate-x-0");
-            } else {
-                menu.classList.add("translate-x-full");
-                menu.classList.remove("translate-x-0");
-            }
+            const mobileMenu = document.getElementById('mobile-menu');
+            const isOpen = mobileMenu.classList.contains('translate-x-0');
+            mobileMenu.classList.toggle('translate-x-full', isOpen);
+            mobileMenu.classList.toggle('translate-x-0', !isOpen);
         }
-
-        // Inicialmente mostrar la sección de Planta Baja
-        mostrarSeccion('planta-baja');
     </script>
-
 </body>
 
 </html>
