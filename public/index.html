@@ -96,49 +96,62 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
-
+    
+        // Al conectarse, solicitar el estado inicial de los sensores
+        socket.on('connect', () => {
+            socket.emit('solicitar-estado-sensores');
+        });
+    
+        // Escuchar el evento que actualiza los sensores
         socket.on('actualizar-sensores', (datosSensor) => {
             actualizarEstadoSensor('sensor1', datosSensor.Sensor1);
             actualizarEstadoSensor('sensor2', datosSensor.Sensor2);
             actualizarEstadoSensor('sensor3', datosSensor.Sensor3);
         });
-
+    
         function actualizarEstadoSensor(id, valor) {
             const elemento = document.getElementById(id);
+            const botonReservar = document.getElementById(`btn-reservar${id.charAt(id.length - 1)}`);
+    
             if (valor === 0) {
                 elemento.textContent = "Ocupado";
                 elemento.classList.remove('bg-green-500');
                 elemento.classList.add('bg-red-500');
+                botonReservar.style.display = 'none'; // Ocultar el botón si está ocupado
             } else {
                 elemento.textContent = "Libre";
                 elemento.classList.remove('bg-red-500');
                 elemento.classList.add('bg-green-500');
+                botonReservar.style.display = 'block'; // Mostrar el botón si está libre
             }
         }
-
+    
         function reservarEspacio(sensorId, botonId) {
             const sensorElement = document.getElementById(sensorId);
             const botonReservar = document.getElementById(botonId);
-
+    
             // Cambiar el color del espacio de estacionamiento a amarillo cuando se reserve
             sensorElement.classList.remove('bg-green-500', 'bg-red-500');
             sensorElement.classList.add('bg-yellow-500');
             sensorElement.textContent = "Reservado";
-
+    
             // Desactivar el botón de reservar
             botonReservar.disabled = true;
             botonReservar.classList.add('opacity-50', 'cursor-not-allowed');
+    
+            // Emitir el evento de reserva al servidor
+            socket.emit('reservar', { sensorId });
         }
-
+    
         function mostrarSeccion(seccion) {
             document.getElementById('planta-baja').classList.add('hidden');
             document.getElementById('planta-alta').classList.add('hidden');
             document.getElementById(seccion).classList.remove('hidden');
-
+    
             // Cambiar colores de fondo del breadcrumb
             const breadcrumbPlantaBaja = document.getElementById('breadcrumb-planta-baja');
             const breadcrumbPlantaAlta = document.getElementById('breadcrumb-planta-alta');
-            
+    
             if (seccion === 'planta-baja') {
                 breadcrumbPlantaBaja.classList.add('text-gray-800');
                 breadcrumbPlantaBaja.classList.remove('text-gray-500');
@@ -151,7 +164,7 @@
                 breadcrumbPlantaAlta.classList.add('text-gray-800');
             }
         }
-
+    
         function toggleMenu() {
             const mobileMenu = document.getElementById('mobile-menu');
             const isOpen = mobileMenu.classList.contains('translate-x-0');
@@ -159,6 +172,7 @@
             mobileMenu.classList.toggle('translate-x-0', !isOpen);
         }
     </script>
+    
 </body>
 
 </html>
