@@ -60,8 +60,11 @@
         <h1 class="text-center text-2xl font-semibold text-gray-800 mb-4">Planta Baja</h1>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <span id="sensor1" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
+            <button id="reserva-sensor1" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2 hidden" onclick="reservar(1)">Reservar</button>
             <span id="sensor2" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
+            <button id="reserva-sensor2" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2 hidden" onclick="reservar(2)">Reservar</button>
             <span id="sensor3" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
+            <button id="reserva-sensor3" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2 hidden" onclick="reservar(3)">Reservar</button>
             <span id="sensor4" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
             <span id="sensor5" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
             <span id="sensor6" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
@@ -85,22 +88,32 @@
         const socket = io();
 
         socket.on('actualizar-sensores', (datosSensor) => {
-            actualizarEstadoSensor('sensor1', datosSensor.Sensor1);
-            actualizarEstadoSensor('sensor2', datosSensor.Sensor2);
-            actualizarEstadoSensor('sensor3', datosSensor.Sensor3);
+            actualizarEstadoSensor('sensor1', datosSensor.Sensor1, 1);
+            actualizarEstadoSensor('sensor2', datosSensor.Sensor2, 2);
+            actualizarEstadoSensor('sensor3', datosSensor.Sensor3, 3);
         });
 
-        function actualizarEstadoSensor(id, valor) {
+        function actualizarEstadoSensor(id, valor, numeroSensor) {
             const elemento = document.getElementById(id);
+            const botonReserva = document.getElementById(`reserva-${id}`);
+
             if (valor === 0) {
                 elemento.textContent = "Ocupado";
                 elemento.classList.remove('bg-green-500');
                 elemento.classList.add('bg-red-500');
+                botonReserva.style.display = "none"; // Ocultar el botón si está ocupado
             } else {
                 elemento.textContent = "Libre";
                 elemento.classList.remove('bg-red-500');
                 elemento.classList.add('bg-green-500');
+                botonReserva.style.display = "block"; // Mostrar el botón si está libre
             }
+        }
+
+        // Función para manejar la reserva
+        function reservar(numeroSensor) {
+            alert(`Has reservado el espacio ${numeroSensor}`);
+            // Aquí puedes agregar lógica para realizar la reserva en el servidor o actualizar el estado.
         }
 
         function mostrarSeccion(seccion) {
@@ -111,7 +124,7 @@
             // Cambiar colores de fondo del breadcrumb
             const breadcrumbPlantaBaja = document.getElementById('breadcrumb-planta-baja');
             const breadcrumbPlantaAlta = document.getElementById('breadcrumb-planta-alta');
-            
+
             if (seccion === 'planta-baja') {
                 breadcrumbPlantaBaja.classList.add('text-gray-800');
                 breadcrumbPlantaBaja.classList.remove('text-gray-500');
@@ -125,19 +138,18 @@
             }
         }
 
-        function toggleMenu() {
-            const menu = document.getElementById("mobile-menu");
-            if (menu.classList.contains("translate-x-full")) {
-                menu.classList.remove("translate-x-full");
-                menu.classList.add("translate-x-0");
-            } else {
-                menu.classList.add("translate-x-full");
-                menu.classList.remove("translate-x-0");
-            }
-        }
+        // Inicialmente, ocultar los botones de reserva
+        document.querySelectorAll('.parking-space').forEach((sensor, index) => {
+            const botonReserva = document.getElementById(`reserva-${sensor.id}`);
+            botonReserva.style.display = "none"; // Asegúrate de que los botones estén ocultos al inicio
+        });
 
-        // Inicialmente mostrar la sección de Planta Baja
-        mostrarSeccion('planta-baja');
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const isOpen = menu.style.transform === 'translateX(0%)';
+
+            menu.style.transform = isOpen ? 'translateX(100%)' : 'translateX(0%)';
+        }
     </script>
 
 </body>
