@@ -59,12 +59,18 @@
     <div id="planta-baja" class="w-full max-w-5xl p-4 bg-white rounded-lg shadow-lg mb-8 mx-4 lg:mx-auto">
         <h1 class="text-center text-2xl font-semibold text-gray-800 mb-4">Planta Baja</h1>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <span id="sensor1" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
-            <button id="reserva-sensor1" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2 hidden" onclick="reservar(1)">Reservar</button>
-            <span id="sensor2" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
-            <button id="reserva-sensor2" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2 hidden" onclick="reservar(2)">Reservar</button>
-            <span id="sensor3" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
-            <button id="reserva-sensor3" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2 hidden" onclick="reservar(3)">Reservar</button>
+            <div class="flex flex-col items-center">
+                <span id="sensor1" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
+                <button id="reserva-sensor1" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2 hidden" onclick="reservar(1)">Reservar</button>
+            </div>
+            <div class="flex flex-col items-center">
+                <span id="sensor2" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
+                <button id="reserva-sensor2" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2 hidden" onclick="reservar(2)">Reservar</button>
+            </div>
+            <div class="flex flex-col items-center">
+                <span id="sensor3" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
+                <button id="reserva-sensor3" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2 hidden" onclick="reservar(3)">Reservar</button>
+            </div>
             <span id="sensor4" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
             <span id="sensor5" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
             <span id="sensor6" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
@@ -126,32 +132,20 @@
             const breadcrumbPlantaAlta = document.getElementById('breadcrumb-planta-alta');
 
             if (seccion === 'planta-baja') {
-                breadcrumbPlantaBaja.classList.add('text-gray-800');
-                breadcrumbPlantaBaja.classList.remove('text-gray-500');
-                breadcrumbPlantaAlta.classList.add('text-gray-500');
-                breadcrumbPlantaAlta.classList.remove('text-gray-800');
+                breadcrumbPlantaBaja.classList.add('text-yellow-300');
+                breadcrumbPlantaAlta.classList.remove('text-yellow-300');
             } else {
-                breadcrumbPlantaBaja.classList.add('text-gray-500');
-                breadcrumbPlantaBaja.classList.remove('text-gray-800');
-                breadcrumbPlantaAlta.classList.add('text-gray-800');
-                breadcrumbPlantaAlta.classList.remove('text-gray-500');
+                breadcrumbPlantaAlta.classList.add('text-yellow-300');
+                breadcrumbPlantaBaja.classList.remove('text-yellow-300');
             }
         }
 
-        // Inicialmente, ocultar los botones de reserva
-        document.querySelectorAll('.parking-space').forEach((sensor, index) => {
-            const botonReserva = document.getElementById(`reserva-${sensor.id}`);
-            botonReserva.style.display = "none"; // Asegúrate de que los botones estén ocultos al inicio
-        });
-
         function toggleMenu() {
             const menu = document.getElementById('mobile-menu');
-            const isOpen = menu.style.transform === 'translateX(0%)';
-
-            menu.style.transform = isOpen ? 'translateX(100%)' : 'translateX(0%)';
+            const menuStyle = window.getComputedStyle(menu);
+            menu.style.transform = menuStyle.transform === 'none' ? 'translateX(0)' : 'translateX(100%)';
         }
     </script>
 
 </body>
-
 </html>
