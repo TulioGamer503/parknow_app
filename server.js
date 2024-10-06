@@ -11,6 +11,7 @@ app.use(express.json());
 
 // Ruta para recibir los datos de los sensores
 app.post('/api/sensores', (req, res) => {
+    console.log("Datos recibidos en el servidor:", req.body); // Agregar este log
     const datosSensor = req.body;
     
     // Validar los datos del sensor
@@ -18,7 +19,7 @@ app.post('/api/sensores', (req, res) => {
         return res.status(400).send({ status: 'error', message: 'Datos del sensor inválidos' });
     }
 
-    console.log("Datos recibidos del proxy local:", datosSensor);
+    console.log("Datos válidos recibidos del proxy local:", datosSensor);
     io.emit('actualizar-sensores', datosSensor);
     res.status(200).send({ status: 'success', data: datosSensor });
 });
