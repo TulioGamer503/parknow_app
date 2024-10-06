@@ -25,6 +25,17 @@ app.post('/api/sensores', (req, res) => {
     res.status(200).send({ status: 'success', data: datosSensor });
 });
 
+// Agregar un nuevo endpoint para manejar la reserva
+app.post('/api/reservar/:numeroSensor', (req, res) => {
+    const numeroSensor = req.params.numeroSensor;
+
+    // Aquí puedes agregar la lógica para manejar la reserva
+    // Por ejemplo, almacenar el estado en la base de datos o enviar un evento a los clientes conectados
+
+    console.log(`Reserva realizada para el sensor ${numeroSensor}`);
+    res.send(`Sensor ${numeroSensor} reservado.`);
+});
+
 // Servir archivos estáticos
 app.use(express.static('public'));
 

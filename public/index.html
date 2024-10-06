@@ -62,14 +62,17 @@
             <div class="flex flex-col items-center">
                 <span id="sensor1" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
                 <button id="reserva-sensor1" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2 hidden" onclick="reservar(1)">Reservar</button>
+                <button id="cancelar-sensor1" class="bg-red-500 text-white px-4 py-2 rounded-lg mt-2 hidden" onclick="cancelarReserva(1)">Cancelar Reserva</button>
             </div>
             <div class="flex flex-col items-center">
                 <span id="sensor2" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
                 <button id="reserva-sensor2" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2 hidden" onclick="reservar(2)">Reservar</button>
+                <button id="cancelar-sensor2" class="bg-red-500 text-white px-4 py-2 rounded-lg mt-2 hidden" onclick="cancelarReserva(2)">Cancelar Reserva</button>
             </div>
             <div class="flex flex-col items-center">
                 <span id="sensor3" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
                 <button id="reserva-sensor3" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2 hidden" onclick="reservar(3)">Reservar</button>
+                <button id="cancelar-sensor3" class="bg-red-500 text-white px-4 py-2 rounded-lg mt-2 hidden" onclick="cancelarReserva(3)">Cancelar Reserva</button>
             </div>
             <span id="sensor4" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
             <span id="sensor5" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
@@ -92,60 +95,62 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
-
+    
         socket.on('actualizar-sensores', (datosSensor) => {
             actualizarEstadoSensor('sensor1', datosSensor.Sensor1, 1);
             actualizarEstadoSensor('sensor2', datosSensor.Sensor2, 2);
             actualizarEstadoSensor('sensor3', datosSensor.Sensor3, 3);
         });
-
+    
         function actualizarEstadoSensor(id, valor, numeroSensor) {
             const elemento = document.getElementById(id);
             const botonReserva = document.getElementById(`reserva-${id}`);
+            const botonCancelar = document.getElementById(`cancelar-${id}`);
 
             if (valor === 0) {
                 elemento.textContent = "Ocupado";
                 elemento.classList.remove('bg-green-500');
                 elemento.classList.add('bg-red-500');
-                botonReserva.style.display = "none"; // Ocultar el botón si está ocupado
+                botonReserva.style.display = "none"; // Ocultar botón de reserva
+                botonCancelar.style.display = "block"; // Mostrar botón de cancelar
             } else {
                 elemento.textContent = "Libre";
                 elemento.classList.remove('bg-red-500');
                 elemento.classList.add('bg-green-500');
-                botonReserva.style.display = "block"; // Mostrar el botón si está libre
+                botonReserva.style.display = "block"; // Mostrar botón de reserva
+                botonCancelar.style.display = "none"; // Ocultar botón de cancelar
             }
         }
-
-        // Función para manejar la reserva
+    
         function reservar(numeroSensor) {
-            alert(`Has reservado el espacio ${numeroSensor}`);
-            // Aquí puedes agregar lógica para realizar la reserva en el servidor o actualizar el estado.
+            socket.emit('reservar', numeroSensor);
+            // Actualizar la interfaz para reflejar la reserva
+            const id = `sensor${numeroSensor}`;
+            const botonReserva = document.getElementById(`reserva-${id}`);
+            const botonCancelar = document.getElementById(`cancelar-${id}`);
+            botonReserva.style.display = "none";
+            botonCancelar.style.display = "block";
+        }
+    
+        function cancelarReserva(numeroSensor) {
+            socket.emit('cancelar-reserva', numeroSensor);
+            // Actualizar la interfaz para reflejar la cancelación
+            const id = `sensor${numeroSensor}`;
+            const botonReserva = document.getElementById(`reserva-${id}`);
+            const botonCancelar = document.getElementById(`cancelar-${id}`);
+            botonReserva.style.display = "block";
+            botonCancelar.style.display = "none";
+        }
+    
+        function toggleMenu() {
+            const menu = document.getElementById("mobile-menu");
+            menu.style.transform = menu.style.transform === "translateX(0)" ? "translateX(100%)" : "translateX(0)";
         }
 
         function mostrarSeccion(seccion) {
-            document.getElementById('planta-baja').classList.add('hidden');
-            document.getElementById('planta-alta').classList.add('hidden');
-            document.getElementById(seccion).classList.remove('hidden');
-
-            // Cambiar colores de fondo del breadcrumb
-            const breadcrumbPlantaBaja = document.getElementById('breadcrumb-planta-baja');
-            const breadcrumbPlantaAlta = document.getElementById('breadcrumb-planta-alta');
-
-            if (seccion === 'planta-baja') {
-                breadcrumbPlantaBaja.classList.add('text-yellow-300');
-                breadcrumbPlantaAlta.classList.remove('text-yellow-300');
-            } else {
-                breadcrumbPlantaAlta.classList.add('text-yellow-300');
-                breadcrumbPlantaBaja.classList.remove('text-yellow-300');
-            }
-        }
-
-        function toggleMenu() {
-            const menu = document.getElementById('mobile-menu');
-            const menuStyle = window.getComputedStyle(menu);
-            menu.style.transform = menuStyle.transform === 'none' ? 'translateX(0)' : 'translateX(100%)';
+            document.getElementById("planta-baja").classList.toggle("hidden", seccion !== "planta-baja");
+            document.getElementById("planta-alta").classList.toggle("hidden", seccion !== "planta-alta");
         }
     </script>
-
 </body>
 </html>

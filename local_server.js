@@ -47,6 +47,21 @@ app.get('/api/estado', (req, res) => {
     res.json({ enLinea: servidorEnLinea });
 });
 
+// Endpoint para reservar un espacio y encender la luz amarilla
+app.post('/api/reservar/:numeroSensor', (req, res) => {
+    const numeroSensor = req.params.numeroSensor;
+
+    // Enviar el comando al puerto serial para encender la luz amarilla
+    puertoSerial.write(`reservar${numeroSensor}\n`, (err) => {
+        if (err) {
+            console.error("Error al enviar datos al puerto serial:", err.message);
+            return res.status(500).send("Error al enviar datos al puerto serial.");
+        }
+        console.log(`Comando enviado para reservar el sensor ${numeroSensor}`);
+        res.send(`Sensor ${numeroSensor} reservado.`);
+    });
+});
+
 // Iniciar el servidor local
 app.listen(4000, () => {
     console.log('Servidor local escuchando en http://localhost:4000');
