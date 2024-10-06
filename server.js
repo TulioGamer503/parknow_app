@@ -11,12 +11,19 @@ app.use(express.json());
 
 // Ruta para recibir los datos de los sensores
 app.post('/api/sensores', (req, res) => {
-    console.log("Datos recibidos en el servidor:", req.body); // Agregar este log
+    console.log("Datos recibidos en el servidor:", req.body); // Log para depuración
+
     const datosSensor = req.body;
-    
+
     // Validar los datos del sensor
-    if (!datosSensor || !datosSensor.Sensor1 || !datosSensor.Sensor2 || !datosSensor.Sensor3) {
+    if (!datosSensor || typeof datosSensor !== 'object') {
         return res.status(400).send({ status: 'error', message: 'Datos del sensor inválidos' });
+    }
+
+    // Comprobar que todas las propiedades necesarias están presentes
+    const { Sensor1, Sensor2, Sensor3 } = datosSensor;
+    if (Sensor1 === undefined || Sensor2 === undefined || Sensor3 === undefined) {
+        return res.status(400).send({ status: 'error', message: 'Faltan datos del sensor' });
     }
 
     console.log("Datos válidos recibidos del proxy local:", datosSensor);

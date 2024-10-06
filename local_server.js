@@ -14,9 +14,10 @@ const puertoSerial = new SerialPort({
 const parser = puertoSerial.pipe(new ReadlineParser({ delimiter: '\r\n' }));
 
 parser.on('data', (datosRecibidos) => {
+    console.log("Datos recibidos del puerto serial:", datosRecibidos); // Agregado para depuración
     try {
         const datosSensor = JSON.parse(datosRecibidos);
-        console.log("Datos recibidos:", datosSensor);
+        console.log("Datos analizados:", datosSensor);
 
         // Enviar los datos al servidor en la nube
         axios.post('https://parknow-app.onrender.com/api/sensores', datosSensor)
@@ -24,7 +25,7 @@ parser.on('data', (datosRecibidos) => {
                 console.log("Datos enviados al servidor:", response.data);
             })
             .catch(error => {
-                console.error("Error al enviar datos al servidor:", error.message);
+                console.error("Error al enviar datos al servidor:", error.response ? error.response.data : error.message);
             });
     } catch (err) {
         console.error("Error al parsear los datos del sensor:", err.message);
