@@ -1,25 +1,10 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-const SerialPort = require('serialport');
-const { ReadlineParser } = require('@serialport/parser-readline');
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-
-// Configuración del puerto serial
-const puertoSerial = new SerialPort({
-    path: 'COM3', // Cambia "COM3" al puerto correcto de tu máquina
-    baudRate: 9600
-});
-
-const parser = puertoSerial.pipe(new ReadlineParser({ delimiter: '\r\n' }));
-
-// Manejar los datos recibidos del puerto serial
-parser.on('data', (data) => {
-    console.log("Datos recibidos del Arduino:", data);
-});
 
 // Configurar Express para recibir datos JSON
 app.use(express.json());
@@ -44,25 +29,11 @@ app.post('/api/sensores', (req, res) => {
 app.post('/api/reservar/:numeroSensor', (req, res) => {
     const numeroSensor = req.params.numeroSensor;
 
-    // Enviar el comando al puerto serial para encender la luz amarilla
-    puertoSerial.write(`encenderAmarillo${numeroSensor}\n`, (err) => {
-        if (err) {
-            console.error("Error al enviar el comando al puerto serial:", err.message);
-            return res.status(500).send("Error al encender la luz amarilla.");
-        }
+    // Enviar el evento a los clientes conectados para encender la luz amarilla
+    io.emit('encender-luz-amarilla', { sensor: numeroSensor });
 
-        console.log(`Comando enviado para encender la luz amarilla del sensor ${numeroSensor}`);
-
-        // Enviar el evento a los clientes conectados
-        io.emit('encender-luz-amarilla', { sensor: numeroSensor });
-
-        res.send(`Sensor ${numeroSensor} reservado y luz amarilla encendida.`);
-    });
-});
-
-// Manejar errores del puerto serial
-puertoSerial.on('error', (err) => {
-    console.error("Error en el puerto serial:", err.message);
+    console.log(`Reserva realizada para el sensor ${numeroSensor}. Luz amarilla encendida.`);
+    res.send(`Sensor ${numeroSensor} reservado y luz amarilla encendida.`);
 });
 
 // Servir archivos estáticos
