@@ -1,5 +1,5 @@
 const express = require('express');
-const { SerialPort } = require('serialport');
+const SerialPort = require('serialport'); // Actualización en la importación
 const { ReadlineParser } = require('@serialport/parser-readline');
 const axios = require('axios');
 
@@ -17,7 +17,7 @@ const puertoSerial = new SerialPort({
 
 const parser = puertoSerial.pipe(new ReadlineParser({ delimiter: '\r\n' }));
 
-parser.on('data', (datosRecibidos) => {
+parser.on('data', async (datosRecibidos) => {
     try {
         const datosSensor = JSON.parse(datosRecibidos);
         console.log("Datos recibidos:", datosSensor);
@@ -26,13 +26,12 @@ parser.on('data', (datosRecibidos) => {
         servidorEnLinea = true;
 
         // Enviar los datos al servidor en la nube
-        axios.post('https://parknow-app.onrender.com/api/sensores', datosSensor)
-            .then(response => {
-                console.log("Datos enviados al servidor:", response.data);
-            })
-            .catch(error => {
-                console.error("Error al enviar datos al servidor:", error.message);
-            });
+        try {
+            const response = await axios.post('https://parknow-app.onrender.com/api/sensores', datosSensor);
+            console.log("Datos enviados al servidor:", response.data);
+        } catch (error) {
+            console.error("Error al enviar datos al servidor:", error.message);
+        }
     } catch (err) {
         console.error("Error al parsear los datos del sensor:", err.message);
     }
@@ -47,28 +46,16 @@ app.get('/api/estado', (req, res) => {
     res.json({ enLinea: servidorEnLinea });
 });
 
-// Endpoint para reservar un espacio y encender la luz amarilla
-app.post('/api/reservar/:numeroSensor', (req, res) => {
-    const numeroSensor = req.params.numeroSensor;
-
-    // Enviar el comando al puerto serial para reservar el sensor
-    puertoSerial.write(`reservar${numeroSensor}\n`, (err) => {
+// Endpoint para encender la luz amarilla sin reserva explícita
+app.post('/api/encender-luz-amarilla', (req, res) => {
+    // Comando para encender la luz amarilla
+    puertoSerial.write(`encenderAmarillo\n`, (err) => {
         if (err) {
-            console.error("Error al enviar datos al puerto serial:", err.message);
-            return res.status(500).send("Error al enviar datos al puerto serial.");
+            console.error("Error al enviar el comando para encender la luz amarilla:", err.message);
+            return res.status(500).send("Error al encender la luz amarilla.");
         }
-        console.log(`Comando enviado para reservar el sensor ${numeroSensor}`);
-
-        // Aquí se envía el comando para encender la luz amarilla
-        puertoSerial.write(`encenderAmarillo\n`, (err) => {
-            if (err) {
-                console.error("Error al enviar el comando para encender la luz amarilla:", err.message);
-                return res.status(500).send("Error al encender la luz amarilla.");
-            }
-            console.log(`Luz amarilla encendida para el sensor ${numeroSensor}`);
-        });
-
-        res.send(`Sensor ${numeroSensor} reservado.`);
+        console.log("Luz amarilla encendida.");
+        res.send("Luz amarilla encendida.");
     });
 });
 

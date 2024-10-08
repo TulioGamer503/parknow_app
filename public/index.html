@@ -134,53 +134,53 @@
             const botonReserva = document.getElementById(`reserva-${id}`);
             const botonCancelar = document.getElementById(`cancelar-${id}`);
 
-            if (valor === 0) {
-                elemento.textContent = "Ocupado";
-                elemento.classList.remove('bg-green-500');
+            if (valor === 1) {
+                elemento.classList.remove('bg-green-500', 'bg-yellow-500');
                 elemento.classList.add('bg-red-500');
-                botonReserva.classList.add('bg-red-300'); // Cambiar fondo de reserva
-                botonReserva.style.pointerEvents = "none"; // Deshabilitar botón de reserva
-                botonCancelar.style.display = "block"; // Mostrar botón de cancelar
-            } else {
-                elemento.textContent = "Libre";
-                elemento.classList.remove('bg-red-500');
+                elemento.innerText = 'Ocupado';
+            } else if (valor === 0) {
+                elemento.classList.remove('bg-red-500', 'bg-yellow-500');
                 elemento.classList.add('bg-green-500');
-                botonReserva.classList.remove('bg-red-300'); // Restablecer fondo de reserva
-                botonReserva.style.pointerEvents = "auto"; // Habilitar botón de reserva
-                botonCancelar.style.display = "none"; // Ocultar botón de cancelar
+                elemento.innerText = 'Libre';
+            } else if (valor === 2) { // Reserva
+                elemento.classList.remove('bg-green-500', 'bg-red-500');
+                elemento.classList.add('bg-yellow-500');
+                elemento.innerText = 'Reservado';
+                botonReserva.classList.add('hidden');
+                botonCancelar.classList.remove('hidden');
             }
         }
 
-        function reservar(numero) {
-            // Emitir evento para reservar espacio y encender el LED amarillo
-            socket.emit('reservar', { espacio: numero });
-            // Aquí puedes agregar un comando específico para encender el LED amarillo
-            socket.emit('encenderLED', { led: 'amarillo', estado: 'on' }); // Emitir evento para encender el LED
+        function reservar(numeroSensor) {
+            socket.emit('reservar', { sensor: numeroSensor });
         }
 
-        function cancelarReserva(numero) {
-            // Emitir evento para cancelar la reserva y apagar el LED amarillo
-            socket.emit('cancelarReserva', { espacio: numero });
-            // Aquí puedes agregar un comando específico para apagar el LED amarillo
-            socket.emit('encenderLED', { led: 'amarillo', estado: 'off' }); // Emitir evento para apagar el LED
+        function cancelarReserva(numeroSensor) {
+            socket.emit('cancelar-reserva', { sensor: numeroSensor });
         }
-
 
         function mostrarSeccion(seccion) {
-            const secciones = ['planta-baja', 'planta-alta'];
-            secciones.forEach(s => {
-                document.getElementById(s).classList.add('hidden');
-                document.getElementById(`breadcrumb-${s}`).classList.remove('text-blue-500');
-                document.getElementById(`breadcrumb-${s}`).classList.add('text-gray-500');
-            });
-            document.getElementById(seccion).classList.remove('hidden');
-            document.getElementById(`breadcrumb-${seccion}`).classList.remove('text-gray-500');
-            document.getElementById(`breadcrumb-${seccion}`).classList.add('text-blue-500');
+            const plantaBaja = document.getElementById('planta-baja');
+            const plantaAlta = document.getElementById('planta-alta');
+
+            if (seccion === 'planta-baja') {
+                plantaBaja.classList.remove('hidden');
+                plantaAlta.classList.add('hidden');
+            } else if (seccion === 'planta-alta') {
+                plantaBaja.classList.add('hidden');
+                plantaAlta.classList.remove('hidden');
+            }
         }
 
         function toggleMenu() {
             const menu = document.getElementById('mobile-menu');
-            menu.style.transform = menu.style.transform === 'translateX(0)' ? 'translateX(100%)' : 'translateX(0)';
+            if (menu.classList.contains('translate-x-full')) {
+                menu.classList.remove('translate-x-full');
+                menu.classList.add('translate-x-0');
+            } else {
+                menu.classList.remove('translate-x-0');
+                menu.classList.add('translate-x-full');
+            }
         }
     </script>
 </body>
