@@ -51,13 +51,23 @@ app.get('/api/estado', (req, res) => {
 app.post('/api/reservar/:numeroSensor', (req, res) => {
     const numeroSensor = req.params.numeroSensor;
 
-    // Enviar el comando al puerto serial para encender la luz amarilla
+    // Enviar el comando al puerto serial para reservar el sensor
     puertoSerial.write(`reservar${numeroSensor}\n`, (err) => {
         if (err) {
             console.error("Error al enviar datos al puerto serial:", err.message);
             return res.status(500).send("Error al enviar datos al puerto serial.");
         }
         console.log(`Comando enviado para reservar el sensor ${numeroSensor}`);
+
+        // Aquí se envía el comando para encender la luz amarilla
+        puertoSerial.write(`encenderAmarillo\n`, (err) => {
+            if (err) {
+                console.error("Error al enviar el comando para encender la luz amarilla:", err.message);
+                return res.status(500).send("Error al encender la luz amarilla.");
+            }
+            console.log(`Luz amarilla encendida para el sensor ${numeroSensor}`);
+        });
+
         res.send(`Sensor ${numeroSensor} reservado.`);
     });
 });
