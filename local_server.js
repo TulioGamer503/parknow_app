@@ -1,65 +1,75 @@
 const express = require('express');
-const SerialPort = require('serialport'); // Actualización en la importación
+const http = require('http');
+const { Server } = require('socket.io');
+const SerialPort = require('serialport');
 const { ReadlineParser } = require('@serialport/parser-readline');
-const axios = require('axios');
 
 const app = express();
-app.use(express.json()); // Middleware para manejar JSON
-
-// Estado del servidor
-let servidorEnLinea = false;
+const server = http.createServer(app);
+const io = new Server(server);
 
 // Configuración del puerto serial
 const puertoSerial = new SerialPort({
-    path: 'COM3', // Cambia "COM3" al puerto correcto
+    path: 'COM3', // Cambia "COM3" al puerto correcto de tu máquina
     baudRate: 9600
 });
 
 const parser = puertoSerial.pipe(new ReadlineParser({ delimiter: '\r\n' }));
 
-parser.on('data', async (datosRecibidos) => {
-    try {
-        const datosSensor = JSON.parse(datosRecibidos);
-        console.log("Datos recibidos:", datosSensor);
+// Manejar los datos recibidos del puerto serial
+parser.on('data', (data) => {
+    console.log("Datos recibidos del Arduino:", data);
+});
 
-        // Cambiar el estado del servidor si se reciben datos
-        servidorEnLinea = true;
+// Configurar Express para recibir datos JSON
+app.use(express.json());
 
-        // Enviar los datos al servidor en la nube
-        try {
-            const response = await axios.post('https://parknow-app.onrender.com/api/sensores', datosSensor);
-            console.log("Datos enviados al servidor:", response.data);
-        } catch (error) {
-            console.error("Error al enviar datos al servidor:", error.message);
-        }
-    } catch (err) {
-        console.error("Error al parsear los datos del sensor:", err.message);
+// Ruta para recibir los datos de los sensores
+app.post('/api/sensores', (req, res) => {
+    const datosSensor = req.body;
+
+    // Validación simple
+    if (!datosSensor || typeof datosSensor !== 'object') {
+        return res.status(400).send({ status: 'error', message: 'Datos no válidos' });
     }
+
+    console.log("Datos recibidos del proxy local:", datosSensor);
+
+    // Enviar los datos a todos los clientes conectados
+    io.emit('actualizar-sensores', datosSensor);
+    res.status(200).send({ status: 'success', data: datosSensor });
 });
 
-puertoSerial.on('error', (err) => {
-    console.error("Error al abrir el puerto serial:", err.message);
-});
+// Ruta para manejar la reserva y encender la luz amarilla
+app.post('/api/reservar/:numeroSensor', (req, res) => {
+    const numeroSensor = req.params.numeroSensor;
 
-// Endpoint para verificar el estado del servidor
-app.get('/api/estado', (req, res) => {
-    res.json({ enLinea: servidorEnLinea });
-});
-
-// Endpoint para encender la luz amarilla sin reserva explícita
-app.post('/api/encender-luz-amarilla', (req, res) => {
-    // Comando para encender la luz amarilla
-    puertoSerial.write(`encenderAmarillo\n`, (err) => {
+    // Enviar el comando al puerto serial para encender la luz amarilla
+    puertoSerial.write(`encenderAmarillo${numeroSensor}\n`, (err) => {
         if (err) {
-            console.error("Error al enviar el comando para encender la luz amarilla:", err.message);
+            console.error("Error al enviar el comando al puerto serial:", err.message);
             return res.status(500).send("Error al encender la luz amarilla.");
         }
-        console.log("Luz amarilla encendida.");
-        res.send("Luz amarilla encendida.");
+
+        console.log(`Comando enviado para encender la luz amarilla del sensor ${numeroSensor}`);
+
+        // Enviar el evento a los clientes conectados
+        io.emit('encender-luz-amarilla', { sensor: numeroSensor });
+
+        res.send(`Sensor ${numeroSensor} reservado y luz amarilla encendida.`);
     });
 });
 
-// Iniciar el servidor local
-app.listen(4000, () => {
-    console.log('Servidor local escuchando en http://localhost:4000');
+// Manejar errores del puerto serial
+puertoSerial.on('error', (err) => {
+    console.error("Error en el puerto serial:", err.message);
+});
+
+// Servir archivos estáticos
+app.use(express.static('public'));
+
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+    console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
