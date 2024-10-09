@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
+const axios = require('axios'); // Importar axios para enviar solicitudes al servidor local
 
 const app = express();
 const server = http.createServer(app);
@@ -36,6 +37,16 @@ app.post('/api/reservar', (req, res) => {
 
         // Enviar los datos de reserva a todos los clientes conectados
         io.emit('actualizar-reservas', estadosReserva);
+
+        // Enviar comando al servidor local para encender o apagar el LED
+        const estadoComando = estadoReserva ? 'reservar' : 'cancelar';
+        axios.post('http://localhost:4000/api/' + estadoComando, { espacio: espacio.replace('espacio', '') })
+            .then(response => {
+                console.log(`Comando enviado al Arduino para ${estadoComando}:`, response.data);
+            })
+            .catch(error => {
+                console.error(`Error al enviar comando al Arduino: ${error.message}`);
+            });
 
         res.status(200).send({ status: 'success', message: `Reserva actualizada para ${espacio}`, data: estadosReserva });
     } else {

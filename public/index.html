@@ -20,29 +20,37 @@
                 <img src="img/barra-de-menus.png" alt="Menu" onclick="toggleMenu();" class="w-8 cursor-pointer">
             </div>
             <div id="menu" class="lg:flex hidden w-full lg:w-auto lg:items-center lg:justify-end flex-col lg:flex-row">
-                <a href="http://parknow.byethost9.com/index.php" class="text-white lg:mr-7 mb-4 lg:mb-0 hover:text-yellow-300">Inicio</a>
+                <a href="http://parknow.byethost9.com/index.php"
+                    class="text-white lg:mr-7 mb-4 lg:mb-0 hover:text-yellow-300">Inicio</a>
                 <a href="#" class="text-white lg:mr-7 mb-4 lg:mb-0 hover:text-yellow-300">Estacionar</a>
-                <a href="http://parknow.byethost9.com/team.php" class="text-white lg:mr-7 mb-4 lg:mb-0 hover:text-yellow-300">Nosotros</a>
-                <a href="http://parknow.byethost9.com/AcercaDe.php" class="text-white hover:text-yellow-300">Acerca de</a>
+                <a href="http://parknow.byethost9.com/team.php"
+                    class="text-white lg:mr-7 mb-4 lg:mb-0 hover:text-yellow-300">Nosotros</a>
+                <a href="http://parknow.byethost9.com/AcercaDe.php" class="text-white hover:text-yellow-300">Acerca
+                    de</a>
             </div>
         </div>
         <!-- Menu mobile -->
-        <div id="mobile-menu" class="lg:hidden fixed top-16 right-0 bg-gray-800 w-full h-screen z-40 overflow-y-auto transform translate-x-full transition-transform duration-300 ease-in-out">
+        <div id="mobile-menu"
+            class="lg:hidden fixed top-16 right-0 bg-gray-800 w-full h-screen z-40 overflow-y-auto transform translate-x-full transition-transform duration-300 ease-in-out">
             <div class="flex justify-end p-4">
                 <img src="img/barra-de-menus.png" alt="Close Menu" onclick="toggleMenu();" class="w-8 cursor-pointer">
             </div>
             <div class="flex flex-col items-center">
-                <a href="http://parknow.byethost9.com/index.php" class="text-white py-4 hover:text-yellow-300">Inicio</a>
+                <a href="http://parknow.byethost9.com/index.php"
+                    class="text-white py-4 hover:text-yellow-300">Inicio</a>
                 <a href="#" class="text-white py-4 hover:text-yellow-300">Estacionar</a>
-                <a href="http://parknow.byethost9.com/team.php" class="text-white py-4 hover:text-yellow-300">Nosotros</a>
-                <a href="http://parknow.byethost9.com/AcercaDe.php" class="text-white py-4 hover:text-yellow-300">Acerca de</a>
+                <a href="http://parknow.byethost9.com/team.php"
+                    class="text-white py-4 hover:text-yellow-300">Nosotros</a>
+                <a href="http://parknow.byethost9.com/AcercaDe.php" class="text-white py-4 hover:text-yellow-300">Acerca
+                    de</a>
             </div>
         </div>
     </nav>
 
     <!-- Breadcrumbs -->
     <div class="flex items-center py-4 overflow-x-auto whitespace-nowrap mt-16 px-4">
-        <a href="#" id="breadcrumb-planta-baja" class="text-gray-500 hover:underline" onclick="mostrarSeccion('planta-baja')">
+        <a href="#" id="breadcrumb-planta-baja" class="text-gray-500 hover:underline"
+            onclick="mostrarSeccion('planta-baja')">
             Planta Baja
         </a>
 
@@ -50,7 +58,8 @@
             /
         </span>
 
-        <a href="#" id="breadcrumb-planta-alta" class="text-gray-500 hover:underline" onclick="mostrarSeccion('planta-alta')">
+        <a href="#" id="breadcrumb-planta-alta" class="text-gray-500 hover:underline"
+            onclick="mostrarSeccion('planta-alta')">
             Planta Alta
         </a>
     </div>
@@ -62,26 +71,38 @@
             <span id="sensor1" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
             <span id="sensor2" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
             <span id="sensor3" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
-            <span id="sensor4" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
-            <span id="sensor5" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
-            <span id="sensor6" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
+            <span id="sensor4" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No
+                Funcional</span>
+            <span id="sensor5" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No
+                Funcional</span>
+            <span id="sensor6" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No
+                Funcional</span>
         </div>
         <div id="botones" class="mt-4 hidden">
-            <button id="reservar1" class="bg-blue-500 text-white py-2 px-4 rounded-lg" onclick="reservar(1)">Reservar Espacio 1</button>
-            <button id="reservar2" class="bg-blue-500 text-white py-2 px-4 rounded-lg" onclick="reservar(2)">Reservar Espacio 2</button>
-            <button id="reservar3" class="bg-blue-500 text-white py-2 px-4 rounded-lg" onclick="reservar(3)">Reservar Espacio 3</button>
+            <button id="reservar1" class="bg-blue-500 text-white py-2 px-4 rounded-lg" onclick="reservar(1)">Reservar
+                Espacio 1</button>
+            <button id="reservar2" class="bg-blue-500 text-white py-2 px-4 rounded-lg" onclick="reservar(2)">Reservar
+                Espacio 2</button>
+            <button id="reservar3" class="bg-blue-500 text-white py-2 px-4 rounded-lg" onclick="reservar(3)">Reservar
+                Espacio 3</button>
         </div>
     </div>
 
     <div id="planta-alta" class="w-full max-w-5xl p-4 bg-white rounded-lg shadow-lg hidden mx-4 lg:mx-auto">
         <h1 class="text-center text-2xl font-semibold text-gray-800 mb-4">Planta Alta</h1>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <span id="sensor7" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
-            <span id="sensor8" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
-            <span id="sensor9" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
-            <span id="sensor10" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
-            <span id="sensor11" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
-            <span id="sensor12" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
+            <span id="sensor7" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No
+                Funcional</span>
+            <span id="sensor8" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No
+                Funcional</span>
+            <span id="sensor9" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No
+                Funcional</span>
+            <span id="sensor10" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No
+                Funcional</span>
+            <span id="sensor11" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No
+                Funcional</span>
+            <span id="sensor12" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No
+                Funcional</span>
         </div>
     </div>
 
@@ -130,14 +151,31 @@
                 },
                 body: JSON.stringify({ espacio })
             })
-            .then(response => response.json())
-            .then(data => {
-                alert(`Espacio ${espacio} reservado!`);
-                actualizarEstadoSensor(`sensor${espacio}`, 0); // Actualiza el estado del sensor a ocupado
-                mostrarBotonesReservar(); // Actualiza la visibilidad de los botones
-            })
-            .catch(error => console.error('Error:', error));
+                .then(response => response.json())
+                .then(data => {
+                    alert(`Espacio ${espacio} reservado!`);
+                    actualizarEstadoSensor(`sensor${espacio}`, 0); // Actualiza el estado del sensor a ocupado
+                    mostrarBotonesReservar(); // Actualiza la visibilidad de los botones
+                })
+                .catch(error => console.error('Error:', error));
         }
+        function cancelarReserva(espacio) {
+            fetch('/api/cancelar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ espacio })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(`Reserva para el Espacio ${espacio} cancelada!`);
+                    actualizarEstadoSensor(`sensor${espacio}`, 1); // Actualiza el estado del sensor a libre
+                    mostrarBotonesReservar(); // Actualiza la visibilidad de los botones
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
 
         function mostrarSeccion(seccion) {
             document.getElementById('planta-baja').classList.add('hidden');
@@ -147,7 +185,7 @@
             // Cambiar colores de fondo del breadcrumb
             const breadcrumbPlantaBaja = document.getElementById('breadcrumb-planta-baja');
             const breadcrumbPlantaAlta = document.getElementById('breadcrumb-planta-alta');
-            
+
             if (seccion === 'planta-baja') {
                 breadcrumbPlantaBaja.classList.add('text-gray-800');
                 breadcrumbPlantaBaja.classList.remove('text-gray-500');
