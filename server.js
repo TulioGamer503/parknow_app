@@ -18,7 +18,14 @@ app.post('/api/sensores', (req, res) => {
     io.emit('actualizar-sensores', datosSensor);
     res.status(200).send({ status: 'success', data: datosSensor });
 });
+app.post('/api/sensores', (req, res) => {
+    const datosSensor = req.body;
+    console.log("Datos recibidos del proxy local:", datosSensor);
 
+    // Enviar los datos a todos los clientes conectados
+    io.emit('actualizar-sensores', datosSensor);
+    res.status(200).send({ status: 'success', data: datosSensor });
+});
 // Servir archivos estáticos
 app.use(express.static('public'));
 
