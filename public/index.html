@@ -32,10 +32,10 @@
                 <img src="img/barra-de-menus.png" alt="Close Menu" onclick="toggleMenu();" class="w-8 cursor-pointer">
             </div>
             <div class="flex flex-col items-center">
-                <a href="http://parnow.byethost9.com/index.php" class="text-white py-4 hover:text-yellow-300">Inicio</a>
+                <a href="http://parknow.byethost9.com/index.php" class="text-white py-4 hover:text-yellow-300">Inicio</a>
                 <a href="#" class="text-white py-4 hover:text-yellow-300">Estacionar</a>
-                <a href="http://parnow.byethost9.com/team.php" class="text-white py-4 hover:text-yellow-300">Nosotros</a>
-                <a href="http://parnow.byethost9.com/AcercaDe.php" class="text-white py-4 hover:text-yellow-300">Acerca de</a>
+                <a href="http://parknow.byethost9.com/team.php" class="text-white py-4 hover:text-yellow-300">Nosotros</a>
+                <a href="http://parknow.byethost9.com/AcercaDe.php" class="text-white py-4 hover:text-yellow-300">Acerca de</a>
             </div>
         </div>
     </nav>
@@ -59,24 +59,17 @@
     <div id="planta-baja" class="w-full max-w-5xl p-4 bg-white rounded-lg shadow-lg mb-8 mx-4 lg:mx-auto">
         <h1 class="text-center text-2xl font-semibold text-gray-800 mb-4">Planta Baja</h1>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div class="relative parking-space" id="sensor1" data-estado="0">
-                <span class="bg-green-500 text-white text-center py-20 px-6 rounded-lg">Libre</span>
-                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg absolute top-2 left-2" onclick="encender(1)">Encender</button>
-                <button class="bg-red-500 text-white px-4 py-2 rounded-lg absolute top-2 left-2 hidden" onclick="apagar(1)">Apagar</button>
-            </div>
-            <div class="relative parking-space" id="sensor2" data-estado="0">
-                <span class="bg-green-500 text-white text-center py-20 px-6 rounded-lg">Libre</span>
-                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg absolute top-2 left-2" onclick="encender(2)">Encender</button>
-                <button class="bg-red-500 text-white px-4 py-2 rounded-lg absolute top-2 left-2 hidden" onclick="apagar(2)">Apagar</button>
-            </div>
-            <div class="relative parking-space" id="sensor3" data-estado="0">
-                <span class="bg-green-500 text-white text-center py-20 px-6 rounded-lg">Libre</span>
-                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg absolute top-2 left-2" onclick="encender(3)">Encender</button>
-                <button class="bg-red-500 text-white px-4 py-2 rounded-lg absolute top-2 left-2 hidden" onclick="apagar(3)">Apagar</button>
-            </div>
+            <span id="sensor1" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
+            <span id="sensor2" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
+            <span id="sensor3" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
             <span id="sensor4" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
             <span id="sensor5" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
             <span id="sensor6" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
+        </div>
+        <div id="botones" class="mt-4 hidden">
+            <button id="reservar1" class="bg-blue-500 text-white py-2 px-4 rounded-lg" onclick="reservar(1)">Reservar Espacio 1</button>
+            <button id="reservar2" class="bg-blue-500 text-white py-2 px-4 rounded-lg" onclick="reservar(2)">Reservar Espacio 2</button>
+            <button id="reservar3" class="bg-blue-500 text-white py-2 px-4 rounded-lg" onclick="reservar(3)">Reservar Espacio 3</button>
         </div>
     </div>
 
@@ -100,51 +93,89 @@
             actualizarEstadoSensor('sensor1', datosSensor.Sensor1);
             actualizarEstadoSensor('sensor2', datosSensor.Sensor2);
             actualizarEstadoSensor('sensor3', datosSensor.Sensor3);
+            mostrarBotonesReservar();
         });
 
         function actualizarEstadoSensor(id, valor) {
             const elemento = document.getElementById(id);
-            const span = elemento.querySelector('span');
-            const encenderBtn = elemento.querySelector('button[onclick^="encender"]');
-            const apagarBtn = elemento.querySelector('button[onclick^="apagar"]');
-
             if (valor === 0) {
-                span.textContent = "Ocupado";
-                span.classList.remove('bg-green-500');
-                span.classList.add('bg-red-500');
-                encenderBtn.classList.add('hidden');
-                apagarBtn.classList.remove('hidden');
+                elemento.textContent = "Ocupado";
+                elemento.classList.remove('bg-green-500');
+                elemento.classList.add('bg-red-500');
             } else {
-                span.textContent = "Libre";
-                span.classList.remove('bg-red-500');
-                span.classList.add('bg-green-500');
-                encenderBtn.classList.remove('hidden');
-                apagarBtn.classList.add('hidden');
+                elemento.textContent = "Libre";
+                elemento.classList.remove('bg-red-500');
+                elemento.classList.add('bg-green-500');
             }
         }
 
-        function encender(sensorId) {
-            // Emitir evento para encender LED
-            socket.emit('encender', sensorId);
+        function mostrarBotonesReservar() {
+            const estado1 = document.getElementById('sensor1').classList.contains('bg-green-500');
+            const estado2 = document.getElementById('sensor2').classList.contains('bg-green-500');
+            const estado3 = document.getElementById('sensor3').classList.contains('bg-green-500');
+
+            const botones = document.getElementById('botones');
+            if (estado1 || estado2 || estado3) {
+                botones.classList.remove('hidden');
+            } else {
+                botones.classList.add('hidden');
+            }
         }
 
-        function apagar(sensorId) {
-            // Emitir evento para apagar LED
-            socket.emit('apagar', sensorId);
+        function reservar(espacio) {
+            fetch('/api/reservar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ espacio })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(`Espacio ${espacio} reservado!`);
+                actualizarEstadoSensor(`sensor${espacio}`, 0); // Actualiza el estado del sensor a ocupado
+                mostrarBotonesReservar(); // Actualiza la visibilidad de los botones
+            })
+            .catch(error => console.error('Error:', error));
         }
 
         function mostrarSeccion(seccion) {
             document.getElementById('planta-baja').classList.add('hidden');
             document.getElementById('planta-alta').classList.add('hidden');
-            document.getElementById('breadcrumb-' + seccion).classList.add('text-yellow-300');
-            document.getElementById('planta-' + seccion).classList.remove('hidden');
+            document.getElementById(seccion).classList.remove('hidden');
+
+            // Cambiar colores de fondo del breadcrumb
+            const breadcrumbPlantaBaja = document.getElementById('breadcrumb-planta-baja');
+            const breadcrumbPlantaAlta = document.getElementById('breadcrumb-planta-alta');
+            
+            if (seccion === 'planta-baja') {
+                breadcrumbPlantaBaja.classList.add('text-gray-800');
+                breadcrumbPlantaBaja.classList.remove('text-gray-500');
+                breadcrumbPlantaAlta.classList.add('text-gray-500');
+                breadcrumbPlantaAlta.classList.remove('text-gray-800');
+            } else {
+                breadcrumbPlantaBaja.classList.add('text-gray-500');
+                breadcrumbPlantaBaja.classList.remove('text-gray-800');
+                breadcrumbPlantaAlta.classList.add('text-gray-800');
+                breadcrumbPlantaAlta.classList.remove('text-gray-500');
+            }
         }
 
         function toggleMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('translate-x-full');
+            const menu = document.getElementById("mobile-menu");
+            if (menu.classList.contains("translate-x-full")) {
+                menu.classList.remove("translate-x-full");
+                menu.classList.add("translate-x-0");
+            } else {
+                menu.classList.add("translate-x-full");
+                menu.classList.remove("translate-x-0");
+            }
         }
+
+        // Inicialmente mostrar la sección de Planta Baja
+        mostrarSeccion('planta-baja');
     </script>
+
 </body>
 
 </html>

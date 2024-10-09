@@ -4,9 +4,7 @@ const { ReadlineParser } = require('@serialport/parser-readline');
 const axios = require('axios');
 
 const app = express();
-
-// Middleware para parsear el JSON
-app.use(express.json());
+app.use(express.json()); // Para recibir datos JSON
 
 // Configuración del puerto serial
 const puertoSerial = new SerialPort({
@@ -38,37 +36,36 @@ puertoSerial.on('error', (err) => {
     console.error("Error al abrir el puerto serial:", err.message);
 });
 
-// Rutas para encender y apagar LEDs
-app.post('/api/encender', (req, res) => {
-    const sensorId = req.body.sensorId;
-    if (sensorId) {
-        const command = `ENCENDER:${sensorId}`;
-        puertoSerial.write(command + '\n', (err) => {
-            if (err) {
-                return res.status(500).send("Error al enviar el comando al Arduino: " + err.message);
-            }
-            console.log(`Comando enviado: ${command}`);
-            res.send("LED encendido.");
-        });
-    } else {
-        res.status(400).send("ID del sensor no proporcionado.");
+// Endpoint para reservar
+app.post('/api/reservar', (req, res) => {
+    const { espacio } = req.body; // espacio debe ser 1, 2 o 3
+    if (espacio < 1 || espacio > 3) {
+        return res.status(400).send({ error: 'Espacio no válido' });
     }
+    
+    // Enviar comando de reserva al Arduino
+    puertoSerial.write(`reservar:${espacio}\n`, (err) => {
+        if (err) {
+            return res.status(500).send({ error: 'Error al enviar reserva' });
+        }
+        res.send({ status: 'Reservado', espacio });
+    });
 });
 
-app.post('/api/apagar', (req, res) => {
-    const sensorId = req.body.sensorId;
-    if (sensorId) {
-        const command = `APAGAR:${sensorId}`;
-        puertoSerial.write(command + '\n', (err) => {
-            if (err) {
-                return res.status(500).send("Error al enviar el comando al Arduino: " + err.message);
-            }
-            console.log(`Comando enviado: ${command}`);
-            res.send("LED apagado.");
-        });
-    } else {
-        res.status(400).send("ID del sensor no proporcionado.");
+// Endpoint para cancelar la reserva
+app.post('/api/cancelar', (req, res) => {
+    const { espacio } = req.body; // espacio debe ser 1, 2 o 3
+    if (espacio < 1 || espacio > 3) {
+        return res.status(400).send({ error: 'Espacio no válido' });
     }
+    
+    // Enviar comando de cancelación al Arduino
+    puertoSerial.write(`cancelar:${espacio}\n`, (err) => {
+        if (err) {
+            return res.status(500).send({ error: 'Error al cancelar la reserva' });
+        }
+        res.send({ status: 'Reserva cancelada', espacio });
+    });
 });
 
 // Iniciar el servidor local
