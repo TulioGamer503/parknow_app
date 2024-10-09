@@ -59,9 +59,9 @@
     <div id="planta-baja" class="w-full max-w-5xl p-4 bg-white rounded-lg shadow-lg mb-8 mx-4 lg:mx-auto">
         <h1 class="text-center text-2xl font-semibold text-gray-800 mb-4">Planta Baja</h1>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <span id="sensor1" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
-            <span id="sensor2" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
-            <span id="sensor3" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg">-</span>
+            <span id="sensor1" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg" onclick="reservarEspacio(1)">-</span>
+            <span id="sensor2" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg" onclick="reservarEspacio(2)">-</span>
+            <span id="sensor3" class="parking-space bg-green-500 text-white text-center py-20 px-6 rounded-lg" onclick="reservarEspacio(3)">-</span>
             <span id="sensor4" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
             <span id="sensor5" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
             <span id="sensor6" class="parking-space bg-gray-500 text-white text-center py-20 px-6 rounded-lg">No Funcional</span>
@@ -136,10 +136,30 @@
             }
         }
 
-        // Inicialmente mostrar la sección de Planta Baja
-        mostrarSeccion('planta-baja');
-    </script>
+        // Función para reservar un espacio
+        function reservarEspacio(espacio) {
+            const comando = `reservar:${espacio}`;
+            socket.emit('comando', comando); // Enviar el comando al servidor
 
+            // Actualizar el estado del espacio en la UI
+            actualizarEstadoSensor(`sensor${espacio}`, 0); // Asumiendo que 0 indica "Ocupado"
+            alert(`Espacio ${espacio} reservado exitosamente.`);
+        }
+
+        // Función para cancelar una reserva
+        function cancelarReserva(espacio) {
+            const comando = `cancelar:${espacio}`;
+            socket.emit('comando', comando); // Enviar el comando al servidor
+
+            // Actualizar el estado del espacio en la UI
+            actualizarEstadoSensor(`sensor${espacio}`, 1); // Asumiendo que 1 indica "Libre"
+            alert(`Reserva del espacio ${espacio} cancelada.`);
+        }
+
+        socket.on('error', (error) => {
+            alert('Error al procesar la reserva: ' + error);
+        });
+    </script>
 </body>
 
 </html>
