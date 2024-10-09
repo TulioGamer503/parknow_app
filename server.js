@@ -9,38 +9,37 @@ const io = new Server(server);
 // Configurar Express para recibir datos JSON
 app.use(express.json());
 
-// Ruta para recibir los datos de los sensores
+let estadosReserva = {
+    espacio1: false, // false = no reservado, true = reservado
+    espacio2: false,
+    espacio3: false
+};
+
+// Ruta para recibir los datos de los sensores (no modificar)
 app.post('/api/sensores', (req, res) => {
     const datosSensor = req.body;
     console.log("Datos recibidos del proxy local:", datosSensor);
 
-    // Enviar los datos a todos los clientes conectados
+    // Enviar los datos de los sensores a todos los clientes conectados
     io.emit('actualizar-sensores', datosSensor);
     res.status(200).send({ status: 'success', data: datosSensor });
 });
 
-// Rutas para encender y apagar LEDs
-app.post('/api/encender', (req, res) => {
-    const sensorId = req.body.sensorId;
-    if (sensorId) {
-        // Emitir el evento de encender LED
-        io.emit('encender-led', { sensorId });
-        console.log(`LED ${sensorId} encendido.`);
-        res.send("LED encendido.");
-    } else {
-        res.status(400).send("ID del sensor no proporcionado.");
-    }
-});
+// Ruta para reservar un espacio
+app.post('/api/reservar', (req, res) => {
+    const { espacio, estadoReserva } = req.body;
 
-app.post('/api/apagar', (req, res) => {
-    const sensorId = req.body.sensorId;
-    if (sensorId) {
-        // Emitir el evento de apagar LED
-        io.emit('apagar-led', { sensorId });
-        console.log(`LED ${sensorId} apagado.`);
-        res.send("LED apagado.");
+    if (espacio && (espacio === 'espacio1' || espacio === 'espacio2' || espacio === 'espacio3')) {
+        // Actualizar el estado de reserva
+        estadosReserva[espacio] = estadoReserva;
+        console.log(`Reserva actualizada: ${espacio} -> ${estadoReserva}`);
+
+        // Enviar los datos de reserva a todos los clientes conectados
+        io.emit('actualizar-reservas', estadosReserva);
+
+        res.status(200).send({ status: 'success', message: `Reserva actualizada para ${espacio}`, data: estadosReserva });
     } else {
-        res.status(400).send("ID del sensor no proporcionado.");
+        res.status(400).send({ status: 'error', message: 'Espacio no válido' });
     }
 });
 
