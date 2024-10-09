@@ -5,6 +5,9 @@ const axios = require('axios');
 
 const app = express();
 
+// Middleware para parsear el JSON
+app.use(express.json());
+
 // Configuración del puerto serial
 const puertoSerial = new SerialPort({
     path: 'COM3', // Cambia "COM3" al puerto correcto
@@ -31,24 +34,41 @@ parser.on('data', (datosRecibidos) => {
     }
 });
 
-// Ruta para encender la LED amarilla
-app.post('/api/encender-amarilla/:numeroSensor', (req, res) => {
-    const numeroSensor = req.params.numeroSensor;
-
-    // Enviar el comando al puerto serial para encender la LED amarilla
-    puertoSerial.write(`encenderAmarillo${numeroSensor}\n`, (err) => {
-        if (err) {
-            console.error("Error al enviar el comando al puerto serial:", err.message);
-            return res.status(500).send("Error al encender la LED amarilla.");
-        }
-
-        console.log(`Comando enviado para encender la LED amarilla del sensor ${numeroSensor}`);
-        res.send(`LED amarilla del sensor ${numeroSensor} encendida.`);
-    });
-});
-
 puertoSerial.on('error', (err) => {
     console.error("Error al abrir el puerto serial:", err.message);
+});
+
+// Rutas para encender y apagar LEDs
+app.post('/api/encender', (req, res) => {
+    const sensorId = req.body.sensorId;
+    if (sensorId) {
+        const command = `ENCENDER:${sensorId}`;
+        puertoSerial.write(command + '\n', (err) => {
+            if (err) {
+                return res.status(500).send("Error al enviar el comando al Arduino: " + err.message);
+            }
+            console.log(`Comando enviado: ${command}`);
+            res.send("LED encendido.");
+        });
+    } else {
+        res.status(400).send("ID del sensor no proporcionado.");
+    }
+});
+
+app.post('/api/apagar', (req, res) => {
+    const sensorId = req.body.sensorId;
+    if (sensorId) {
+        const command = `APAGAR:${sensorId}`;
+        puertoSerial.write(command + '\n', (err) => {
+            if (err) {
+                return res.status(500).send("Error al enviar el comando al Arduino: " + err.message);
+            }
+            console.log(`Comando enviado: ${command}`);
+            res.send("LED apagado.");
+        });
+    } else {
+        res.status(400).send("ID del sensor no proporcionado.");
+    }
 });
 
 // Iniciar el servidor local

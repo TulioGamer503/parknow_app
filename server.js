@@ -12,12 +12,6 @@ app.use(express.json());
 // Ruta para recibir los datos de los sensores
 app.post('/api/sensores', (req, res) => {
     const datosSensor = req.body;
-
-    // Validación simple
-    if (!datosSensor || typeof datosSensor !== 'object') {
-        return res.status(400).send({ status: 'error', message: 'Datos no válidos' });
-    }
-
     console.log("Datos recibidos del proxy local:", datosSensor);
 
     // Enviar los datos a todos los clientes conectados
@@ -25,15 +19,29 @@ app.post('/api/sensores', (req, res) => {
     res.status(200).send({ status: 'success', data: datosSensor });
 });
 
-// Ruta para manejar la reserva y encender la luz amarilla
-app.post('/api/reservar/:numeroSensor', (req, res) => {
-    const numeroSensor = req.params.numeroSensor;
+// Rutas para encender y apagar LEDs
+app.post('/api/encender', (req, res) => {
+    const sensorId = req.body.sensorId;
+    if (sensorId) {
+        // Emitir el evento de encender LED
+        io.emit('encender-led', { sensorId });
+        console.log(`LED ${sensorId} encendido.`);
+        res.send("LED encendido.");
+    } else {
+        res.status(400).send("ID del sensor no proporcionado.");
+    }
+});
 
-    // Enviar el evento a los clientes conectados para encender la luz amarilla
-    io.emit('encender-luz-amarilla', { sensor: numeroSensor });
-
-    console.log(`Reserva realizada para el sensor ${numeroSensor}. Luz amarilla encendida.`);
-    res.send(`Sensor ${numeroSensor} reservado y luz amarilla encendida.`);
+app.post('/api/apagar', (req, res) => {
+    const sensorId = req.body.sensorId;
+    if (sensorId) {
+        // Emitir el evento de apagar LED
+        io.emit('apagar-led', { sensorId });
+        console.log(`LED ${sensorId} apagado.`);
+        res.send("LED apagado.");
+    } else {
+        res.status(400).send("ID del sensor no proporcionado.");
+    }
 });
 
 // Servir archivos estáticos
